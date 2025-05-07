@@ -102,23 +102,21 @@ def generate_otp():
 def dashboard(request):
     user = request.user
     # * Check if this voter has been verified
-    if user.voter.otp is None or user.voter.verified == False:
-        if not settings.SEND_OTP:
-            # Bypass
-            msg = bypass_otp()
-            messages.success(request, msg)
-            return redirect(reverse('show_ballot'))
-        else:
-            return redirect(reverse('voterVerify'))
+    if not settings.SEND_OTP:
+        # Bypass OTP verification completely
+        if not user.voter.verified:
+            user.voter.otp = "0000"
+            user.voter.verified = True
+            user.voter.save()
+        
+    if user.voter.voted:  # * User has voted
+        # To display election result or candidates I voted for
+        context = {
+            'my_votes': Votes.objects.filter(voter=user.voter),
+        }
+        return render(request, "voting/voter/result.html", context)
     else:
-        if user.voter.voted:  # * User has voted
-            # To display election result or candidates I voted for ?
-            context = {
-                'my_votes': Votes.objects.filter(voter=user.voter),
-            }
-            return render(request, "voting/voter/result.html", context)
-        else:
-            return redirect(reverse('show_ballot'))
+        return redirect(reverse('show_ballot'))
 
 
 def verify(request):
@@ -236,6 +234,15 @@ def show_ballot(request):
     if request.user.voter.voted:
         messages.error(request, "You have voted already")
         return redirect(reverse('voterDashboard'))
+
+    # Handle OTP verification
+    if not settings.SEND_OTP and not request.user.voter.verified:
+        request.user.voter.otp = "0000"
+        request.user.voter.verified = True
+        request.user.voter.save()
+    elif not request.user.voter.verified:
+        return redirect(reverse('voterVerify'))
+
     ballot = generate_ballot(display_controls=False)
     context = {
         'ballot': ballot
