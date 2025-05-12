@@ -145,6 +145,7 @@ STATICFILES_DIRS = [
 
 AUTH_USER_MODEL = 'account.CustomUser'
 AUTHENTICATION_BACKENDS = ['account.email_backend.EmailBackend']
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ELECTION_TITLE_PATH = os.path.join(
     BASE_DIR, 'election_title.txt')  # Election Title File
