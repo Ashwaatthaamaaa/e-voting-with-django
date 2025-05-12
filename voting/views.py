@@ -102,14 +102,11 @@ def generate_otp():
 def dashboard(request):
     user = request.user
     # * Check if this voter has been verified
-    if user.voter.otp is None or user.voter.verified == False:
-        if not settings.SEND_OTP:
+    if  user.voter.verified == False:
+
             # Bypass
-            msg = bypass_otp()
-            messages.success(request, msg)
+            messages.success(request, "You have been verified")
             return redirect(reverse('show_ballot'))
-        else:
-            return redirect(reverse('voterVerify'))
     else:
         if user.voter.voted:  # * User has voted
             # To display election result or candidates I voted for ?
