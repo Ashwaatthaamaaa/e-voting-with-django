@@ -84,46 +84,28 @@ WSGI_APPLICATION = 'e_voting.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/stable/ref/settings/#databases
 
+# settings.py DATABASES section
+
 # Default database configuration (e.g., for local development without DATABASE_URL)
-# You can keep this as SQLite or your local MySQL setup
 DEFAULT_DB_CONFIG = {
     'ENGINE': 'django.db.backends.sqlite3',
     'NAME': BASE_DIR / 'db.sqlite3',
 }
-# Or if you configured MySQL locally before:
-# DEFAULT_DB_CONFIG = {
-#      'ENGINE': 'django.db.backends.mysql',
-#      'NAME': 'local_db_name',
-#      'USER': 'local_db_user',
-#      'PASSWORD': 'local_db_password',
-#      'HOST': '127.0.0.1',
-#      'PORT': '3306',
-#      'OPTIONS': {
-#          'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#      },
-# }
 
-
-
-
+# Parse the DATABASE_URL environment variable
 db_config = dj_database_url.config(
     default=os.environ.get('DATABASE_URL'),
     conn_max_age=600,
     conn_health_checks=True,
 )
-# If DATABASE_URL is not set (e.g., locally), parse returns None.
-# In that case, fall back to the default config defined above.
+
+# If DATABASE_URL was not found or is empty, fall back to default
 if not db_config:
      print("DATABASE_URL environment variable not found, falling back to default DB config.")
      DATABASES = {'default': DEFAULT_DB_CONFIG}
 else:
-     # Check if the engine is MySQL and explicitly set it for mysql-connector-python
-     if db_config.get('ENGINE') == 'django.db.backends.mysql':
-         print("Detected standard MySQL engine, switching to mysql.connector.django engine.")
-         db_config['ENGINE'] = 'mysql.connector.django' # <-- Set the correct engine
-
-     DATABASES = {'default': db_config} # Use the (potentially modified) config
-
+     # No engine override needed for mysqlclient, dj-database-url default is fine
+     DATABASES = {'default': db_config}
 # Password validation
 # ... (AUTH_PASSWORD_VALIDATORS remains the same) ...
 

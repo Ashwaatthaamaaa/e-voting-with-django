@@ -1,17 +1,12 @@
 # nixpacks.toml
 
-# Define phases (optional, Nixpacks usually detects Python)
-# [phases.setup]
-# nixPkgs = [...] # System-wide packages if needed before Python setup
+# Add system packages needed to build mysqlclient
+[phases.setup]
+aptPkgs = ["python3-dev", "default-libmysqlclient-dev", "build-essential"]
 
-# Install system libraries needed by WeasyPrint
-[phases.install]
-aptPkgs = ["libpango-1.0-0", "libcairo2", "libgdk-pixbuf-2.0-0", "libffi-dev"] # Common Debian/Ubuntu names
+# Optional: Add WeasyPrint dependencies if you need PDF generation
+# aptPkgs = ["python3-dev", "default-libmysqlclient-dev", "build-essential", "libpango-1.0-0", "libcairo2", "libgdk-pixbuf-2.0-0", "libffi-dev"]
 
-# Define build command (optional if handled elsewhere)
-# [phases.build]
-# cmds = ["python manage.py collectstatic --noinput"]
-
-# Define start command (if not using Procfile)
+# Optional: Define start command if NOT using Procfile
 # [start]
 # cmd = "gunicorn e_voting.wsgi --log-file -"
