@@ -1,7 +1,6 @@
 # requirements.txt
 Django~=4.2.0
-mysql-connector-python==8.0.33
-# virtualenv==20.0.31 # Remove this line if not needed
+mysql-connector-python[cabi]==8.0.33# virtualenv==20.0.31 # Remove this line if not needed
 Pillow==11.2.1
 django-renderpdf~=5.0
 requests~=2.31.0
