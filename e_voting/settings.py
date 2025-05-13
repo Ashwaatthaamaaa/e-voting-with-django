@@ -104,21 +104,25 @@ DEFAULT_DB_CONFIG = {
 # }
 
 
-DATABASES = {
-    'default': dj_database_url.config(
-        # Reads the DATABASE_URL env var provided by Railway
-        default=os.environ.get('DATABASE_URL'), # Use DATABASE_URL if set
-        conn_max_age=600, # Keep connections alive for 10 minutes
-        conn_health_checks=True,
-    )
-}
 
+
+db_config = dj_database_url.config(
+    default=os.environ.get('DATABASE_URL'),
+    conn_max_age=600,
+    conn_health_checks=True,
+)
 # If DATABASE_URL is not set (e.g., locally), parse returns None.
 # In that case, fall back to the default config defined above.
-if not DATABASES['default']:
+if not db_config:
      print("DATABASE_URL environment variable not found, falling back to default DB config.")
-     DATABASES['default'] = DEFAULT_DB_CONFIG
+     DATABASES = {'default': DEFAULT_DB_CONFIG}
+else:
+     # Check if the engine is MySQL and explicitly set it for mysql-connector-python
+     if db_config.get('ENGINE') == 'django.db.backends.mysql':
+         print("Detected standard MySQL engine, switching to mysql.connector.django engine.")
+         db_config['ENGINE'] = 'mysql.connector.django' # <-- Set the correct engine
 
+     DATABASES = {'default': db_config} # Use the (potentially modified) config
 
 # Password validation
 # ... (AUTH_PASSWORD_VALIDATORS remains the same) ...
