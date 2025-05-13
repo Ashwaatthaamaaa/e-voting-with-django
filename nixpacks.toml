@@ -1,12 +1,12 @@
 # nixpacks.toml
 
-# Add system packages needed to build mysqlclient
 [phases.setup]
-aptPkgs = ["python3-dev", "default-libmysqlclient-dev", "build-essential"]
+aptPkgs = ["python3-dev", "libmysqlclient-dev", "build-essential"]
 
-# Optional: Add WeasyPrint dependencies if you need PDF generation
-# aptPkgs = ["python3-dev", "default-libmysqlclient-dev", "build-essential", "libpango-1.0-0", "libcairo2", "libgdk-pixbuf-2.0-0", "libffi-dev"]
+# If you also need WeasyPrint dependencies, add them back here:
+# aptPkgs = ["python3-dev", "libmysqlclient-dev", "build-essential", "libpango-1.0-0", "libcairo2", "libgdk-pixbuf-2.0-0", "libffi-dev"]
 
-# Optional: Define start command if NOT using Procfile
 # [start]
-# cmd = "gunicorn e_voting.wsgi --log-file -"
+# # If you defined a start command here and are also using a Procfile,
+# # ensure only one is defining the start command.
+# # Prefer Procfile for web/release commands.
